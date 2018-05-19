@@ -9,7 +9,6 @@ class UrzasPress:
         'http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid='+
         self.id)
         self.soup = BeautifulSoup(self.cardUrl.text,'lxml')
-
     def card_name(self):
         if self.soup.find("div", string=re.compile("Card Name:")):
             self.card_label = self.soup.find("div", string=re.compile(
@@ -43,9 +42,15 @@ class UrzasPress:
     def card_text(self):
         if self.soup.select(".cardtextbox"):
             self.text_label = self.soup.select(".cardtextbox")
-            self.card_txt = [text.get_text() for text in self.text_label]
+            self.card_txt = []
+            for self.text_box in self.text_label:
+                self.symbols = self.text_box.find_all('img')
+                self.alt_List = []
+                for self.alt_text in self.symbols:
+                    self.alt_List.append(self.alt_text['alt'])
+                self.alt_List.append(self.text_box.get_text().strip())
+                self.card_txt.append(self.alt_List)
             return self.card_txt
-        return
     def flavor_text(self):
         if self.soup.select(".flavortextbox"):
             self.flavor_label = self.soup.select(".flavortextbox")
